@@ -1,0 +1,17 @@
+{
+  "_copy_without_render": [
+    "*.rst_t"
+  ],
+  "_template": "https://github.com/statisticsnorway/ssb-pypitemplate.git",
+  "author": "Arne S\u00f8rli",
+  "copyright_owner": "Arne S\u00f8rli",
+  "copyright_year": "2023",
+  "development_status": "Development Status :: 3 - Alpha",
+  "email": "arne.sorli@kongsberg.frisurf.no",
+  "friendly_name": "Score Orienteering",
+  "github_organization": "arnesor",
+  "license": "MIT",
+  "package_name": "scoreo",
+  "project_name": "score-o",
+  "version": "0.0.0"
+}
