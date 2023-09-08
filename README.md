@@ -23,6 +23,8 @@
 [black]: https://github.com/psf/black
 [poetry]: https://python-poetry.org/
 
+Analysis tools for score orienteering competitions.
+
 ## Features
 
 - TODO
