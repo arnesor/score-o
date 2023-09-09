@@ -6,11 +6,10 @@ https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
 
 from pathlib import Path
 
-# import xml.etree.ElementTree as ET
 import defusedxml.ElementTree
 
 
-def read_ocad_file(filename: Path):
+def read_course_file(filename: Path) -> None:
     """Reads an OCAD file and prints information about controls."""
     print(f"Parsing file {filename}")
     root = defusedxml.ElementTree.parse(filename).getroot()

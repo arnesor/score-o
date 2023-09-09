@@ -1,17 +1,20 @@
 """Command-line interface."""
-from pathlib import Path
+# from pathlib import Path
 
 import click
-import functions
-import matplotlib.pyplot as plt
+
+# import matplotlib.pyplot as plt
 import networkx as nx
+
+
+# import scoreo.functions
 
 
 @click.command()
 @click.version_option()
 def main() -> None:
     """Score Orienteering."""
-    functions.read_ocad_file(Path("race_230907.Courses.xml"))
+    # scoreo.functions.read_course_file(Path("race_230907.Courses.xml"))
 
     g = nx.Graph()
 
@@ -31,7 +34,7 @@ def main() -> None:
         font_family="Times New Roman",
         font_weight="bold",
     )
-    plt.show()
+    # plt.show()
 
 
 if __name__ == "__main__":
