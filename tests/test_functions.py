@@ -1,6 +1,9 @@
-from scoreo.functions import example_function
+from pathlib import Path
+
+from scoreo.functions import read_course_file
 
 
-def test_example_function() -> None:
-    assert example_function(1, 2) == "1 is less than 2"
-    assert example_function(1, 0) == "1 is greater than or equal to 0"
+def test_read_course_file() -> None:
+    filename = Path(__file__).parent / "data" / "race_230907.Courses.xml"
+    read_course_file(filename)
+    assert True
