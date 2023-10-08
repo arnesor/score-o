@@ -2,8 +2,6 @@
 from pathlib import Path
 
 import click
-
-# import matplotlib.pyplot as plt
 import networkx as nx
 
 import scoreo.functions
@@ -14,8 +12,9 @@ import scoreo.functions
 @click.argument("course_file", type=click.Path(exists=True))
 def main(course_file: str) -> None:
     """Score Orienteering."""
-    scoreo.functions.read_course_file(Path(course_file))
+    course = scoreo.functions.read_course_file(Path(course_file))
     click.echo(f"Read file {click.format_filename(course_file)}")
+    print(course)
 
     g = nx.Graph()
 
