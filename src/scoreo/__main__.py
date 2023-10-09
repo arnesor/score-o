@@ -4,7 +4,7 @@ from pathlib import Path
 import click
 import networkx as nx
 
-import scoreo.functions
+from scoreo.course import Course
 
 
 @click.command()
@@ -12,7 +12,8 @@ import scoreo.functions
 @click.argument("course_file", type=click.Path(exists=True))
 def main(course_file: str) -> None:
     """Score Orienteering."""
-    course = scoreo.functions.read_course_file(Path(course_file))
+    course = Course()
+    course.read_ocad_course_file(Path(course_file))
     click.echo(f"Read file {click.format_filename(course_file)}")
     print(course)
 

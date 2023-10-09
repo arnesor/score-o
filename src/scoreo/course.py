@@ -1,4 +1,7 @@
 """Classes and functions for courses and controls."""
+from pathlib import Path
+
+import defusedxml.ElementTree
 
 
 class Control:
@@ -38,14 +41,38 @@ class Course:
 
     def __init__(self) -> None:
         self.controls: dict[str, Control] = {}
+        self.map_scale = 5000
 
     def __repr__(self) -> str:
         result = ""
         for _, control in self.controls.items():
             result += str(control) + "\n"
+        result += f"Map scale: {self.map_scale}"
         return result
 
     def add_control(self, control: Control) -> None:
         """Add a control to the course."""
         key = control.code
         self.controls[key] = control
+
+    def read_ocad_course_file(self, filename: Path) -> None:
+        """Reads an OCAD file and prints information about controls."""
+        print(f"Parsing file {filename}")
+        root = defusedxml.ElementTree.parse(filename).getroot()
+
+        # Get map scale
+        namespace = {"ns": "http://www.orienteering.org/datastandard/3.0"}
+        scale_element = root.find(".//ns:Scale", namespace)
+        if scale_element is not None:
+            self.map_scale = int(scale_element.text)
+
+        # For each control, get id and map position
+        for xml_control in root.findall(".//ns:Control", namespace):
+            id_element = xml_control.find("ns:Id", namespace)
+            pos_element = xml_control.find("ns:MapPosition", namespace)
+            if id_element is not None and pos_element is not None:
+                id_ = id_element.text
+                x_pos = pos_element.get("x")
+                y_pos = pos_element.get("y")
+                control = Control(id_, x_pos, y_pos)
+                self.add_control(control)
