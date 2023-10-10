@@ -18,10 +18,12 @@ class Control:
         self.terrain_y = 0
 
     def __repr__(self) -> str:
-        return (
-            f"Control({self.code}, {self.map_x}, {self.map_y}, {self.terrain_x}, "
-            f"{self.terrain_y}, {self.points})"
-        )
+        return f"{self.code} {self.terrain_x} {self.terrain_y}"
+        #
+        # return (
+        #     f"Control({self.code}, {self.map_x}, {self.map_y}, {self.terrain_x}, "
+        #     f"{self.terrain_y}, {self.points})"
+        # )
 
     def set_terrain_position(
         self, scale: int, terrain_offset_x: int, terrain_offset_y: int
