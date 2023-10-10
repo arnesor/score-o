@@ -52,8 +52,10 @@ class Course:
 
     def add_control(self, control: Control) -> None:
         """Add a control to the course."""
-        key = control.code
-        self.controls[key] = control
+        if control.code[0] in {"M", "F"}:
+            control.code = "1"  # Code for finish
+        if control.code.isdigit():
+            self.controls[control.code] = control
 
     def read_ocad_course_file(self, filename: Path) -> None:
         """Reads an OCAD file and prints information about controls."""
@@ -76,3 +78,21 @@ class Course:
                 y_pos = pos_element.get("y")
                 control = Control(id_, x_pos, y_pos)
                 self.add_control(control)
+
+        self.set_terrain_coordinates()
+
+    def set_terrain_coordinates(self) -> None:
+        ll = self._get_lower_left()
+        mm_to_m = 1000  # Number of millimeters in one meter
+        scale_factor = int(self.map_scale / Control.multiplier / mm_to_m)
+        for control in self.controls.values():
+            control.terrain_x = (control.map_x - ll["min_x"]) * scale_factor
+            control.terrain_y = (control.map_y - ll["min_y"]) * scale_factor
+
+    def _get_lower_left(self) -> dict[str, int]:
+        map_x_values = [control.map_x for control in self.controls.values()]
+        map_y_values = [control.map_y for control in self.controls.values()]
+        return {
+            "min_x": min(map_x_values),
+            "min_y": min(map_y_values),
+        }
