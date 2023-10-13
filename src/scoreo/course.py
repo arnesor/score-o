@@ -2,6 +2,7 @@
 from pathlib import Path
 
 import defusedxml.ElementTree
+from bidict import bidict
 
 
 class Control:
@@ -43,6 +44,7 @@ class Course:
 
     def __init__(self) -> None:
         self.controls: dict[str, Control] = {}
+        self.control_order: bidict[str, str] = bidict()
         self.map_scale = 5000
 
     def __repr__(self) -> str:
@@ -83,7 +85,14 @@ class Course:
 
         self.set_terrain_coordinates()
 
+        # opsolver needs sorted sequential numbers for the controls.
+        # Sort and make a mapping between sequential number and control code.
+        self.controls = dict(sorted(self.controls.items()))
+        for count, control_code in enumerate(self.controls, start=1):
+            self.control_order[str(count)] = control_code
+
     def set_terrain_coordinates(self) -> None:
+        """Set terrain coordinates in meters, using an offset to get positive numbers."""
         ll = self._get_lower_left()
         mm_to_m = 1000  # Number of millimeters in one meter
         scale_factor = int(self.map_scale / Control.multiplier / mm_to_m)
@@ -98,3 +107,10 @@ class Course:
             "min_x": min(map_x_values),
             "min_y": min(map_y_values),
         }
+
+    def write_opsolver_file(self) -> None:
+        """Write a problem file in oplib format for opsolver."""
+        # Opsolver needs sequential numbers 1..number of controls.
+        # Use bidict to store mapping between sequential numbers and control codes
+
+        pass
