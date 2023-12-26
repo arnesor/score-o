@@ -1,4 +1,5 @@
 """Classes and functions for courses and controls."""
+import csv
 from pathlib import Path
 
 import defusedxml.ElementTree
@@ -17,9 +18,10 @@ class Control:
         self.points = 0
         self.terrain_x = 0
         self.terrain_y = 0
+        self.score = 0
 
     def __repr__(self) -> str:
-        return f"{self.code} {self.terrain_x} {self.terrain_y}"
+        return f"{self.code} {self.terrain_x} {self.terrain_y} {self.score}"
         #
         # return (
         #     f"Control({self.code}, {self.map_x}, {self.map_y}, {self.terrain_x}, "
@@ -51,7 +53,8 @@ class Course:
         result = ""
         for _, control in self.controls.items():
             result += str(control) + "\n"
-        result += f"Map scale: {self.map_scale}"
+        result += f"Map scale: {self.map_scale}\n"
+        result += f"Control order: {self.control_order}\n"
         return result
 
     def add_control(self, control: Control) -> None:
@@ -112,5 +115,31 @@ class Course:
         """Write a problem file in oplib format for opsolver."""
         # Opsolver needs sequential numbers 1..number of controls.
         # Use bidict to store mapping between sequential numbers and control codes
-
+        # for control_mapping in self.control_order:
         pass
+
+    def write_score_template(self) -> None:
+        """Write a template file for setting scores on each control."""
+        filename = Path("score_template.sco")
+        content = "\n".join(f"{key}, " for key in self.controls.keys())
+        filename.write_text(content)
+        print(f"Wrote file {filename}")
+
+    def read_score_file(self, filename: Path) -> None:
+        """Reads a score file with the score of each control.
+
+        Format: control_id, score
+        Only scores from controls matching the control keys from the imported OCAD-file
+        will be imported.
+
+        Args:
+            filename: Name of the score file
+        """
+        print(f"Reading score file {filename}")
+
+        with open(filename) as file:
+            reader = csv.reader(file)
+            for row in reader:
+                control_id, score = row
+                if control_id in self.controls:
+                    self.controls[control_id].score = int(score)
