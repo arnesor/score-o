@@ -2,9 +2,12 @@
 from pathlib import Path
 
 import click
-import networkx as nx
 
 from scoreo.course import Course
+
+
+# import matplotlib.pyplot as plt
+# import networkx as nx
 
 
 @click.command()
@@ -12,30 +15,22 @@ from scoreo.course import Course
 @click.argument("course_file", type=click.Path(exists=True))
 def main(course_file: str) -> None:
     """Score Orienteering."""
+    filename = Path(course_file)
+    basename = filename.stem.split(".")[0]
+    score_file = filename.parent / f"{basename}.sco"
+
     course = Course()
-    course.read_ocad_course_file(Path(course_file))
+    course.read_ocad_course_file(filename)
     click.echo(f"Read file {click.format_filename(course_file)}")
-    print(course)
 
-    g = nx.Graph()
+    if score_file.is_file():
+        course.read_score_file(score_file)
+        course.write_opsolver_file(filename, course.estimate_max_distance())
+    else:
+        click.echo(f"No score file: {score_file} Creating template. Fill in and rerun.")
+        course.write_score_template(score_file)
 
-    g.add_edge("A", "C")
-    g.add_edge("B", "C")
-    g.add_edge("B", "D")
-    g.add_edge("C", "D")
-    g.add_edge("D", "E")
-
-    nx.draw(
-        g,
-        with_labels=True,
-        node_color="red",
-        node_size=3000,
-        font_color="white",
-        font_size=20,
-        font_family="Times New Roman",
-        font_weight="bold",
-    )
-    # plt.show()
+    # print(course)
 
 
 if __name__ == "__main__":

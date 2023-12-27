@@ -3,6 +3,9 @@ import csv
 from pathlib import Path
 
 import defusedxml.ElementTree
+
+# import matplotlib.pyplot as plt
+import networkx as nx
 from bidict import bidict
 
 
@@ -111,16 +114,61 @@ class Course:
             "min_y": min(map_y_values),
         }
 
-    def write_opsolver_file(self) -> None:
-        """Write a problem file in oplib format for opsolver."""
-        # Opsolver needs sequential numbers 1..number of controls.
-        # Use bidict to store mapping between sequential numbers and control codes
-        # for control_mapping in self.control_order:
-        pass
+    def estimate_max_distance(self) -> int:
+        """Estimate the initial max distance for visiting all controls.
 
-    def write_score_template(self) -> None:
+        Algorithm: Circumference of the bounding rectangle.
+
+        Returns:
+            The max distance in meters.
+        """
+        x_values = [control.terrain_x for control in self.controls.values()]
+        y_values = [control.terrain_y for control in self.controls.values()]
+        return 2 * (max(x_values) - min(x_values)) + 2 * (max(y_values) - min(y_values))
+
+    def write_opsolver_file(self, source_file: Path, cost_limit: int) -> None:
+        """Write a problem file in oplib format for opsolver.
+
+        The file format is described on
+        https://github.com/bcamath-ds/OPLib/tree/master/instances
+
+        Args:
+            source_file: IOF xml file with control coordinates
+            cost_limit: The cost limit for the problem (distance in meters)
+        """
+        basename = source_file.stem.split(".")[0]
+        dir = source_file.parent / basename
+        if not dir.is_dir():
+            dir.mkdir()
+
+        filename = dir / f"{basename}-{str(cost_limit)}.oplib"
+        with open(filename, "w") as file:
+            file.write(f"NAME : {basename}\n")
+            file.write(f"COMMENT : {basename} with cost limit {cost_limit}\n")
+            file.write("TYPE : OP\n")
+            file.write(f"DIMENSION : {len(self.controls)}\n")
+            file.write(f"COST_LIMIT : {str(cost_limit)}\n")
+            file.write("EDGE_WEIGHT_TYPE : EUC_2D\n")
+
+            file.write("NODE_COORD_SECTION\n")
+            for key, value in self.control_order.items():
+                file.write(
+                    f"{key} "  # type: ignore[union-attr]
+                    f"{self.controls.get(value).terrain_x} "
+                    f"{self.controls.get(value).terrain_y}\n"
+                )
+
+            file.write("NODE_SCORE_SECTION\n")
+            for key, value in self.control_order.items():
+                file.write(f"{key} {self.controls.get(value).score}\n")  # type: ignore[union-attr]
+
+            file.write("DEPOT_SECTION\n")
+            file.write("1\n")
+            file.write("-1\n")
+            file.write("EOF\n")
+
+    def write_score_template(self, filename: Path) -> None:
         """Write a template file for setting scores on each control."""
-        filename = Path("score_template.sco")
         content = "\n".join(f"{key}, " for key in self.controls.keys())
         filename.write_text(content)
         print(f"Wrote file {filename}")
@@ -143,3 +191,30 @@ class Course:
                 control_id, score = row
                 if control_id in self.controls:
                     self.controls[control_id].score = int(score)
+
+    def display_controls(self, solution: list[int]) -> None:
+        """Display the controls in a course based on their 'map_x' and 'map_y' attributes."""
+        # Create a graph
+        g = nx.Graph()
+
+        # Add nodes (controls) to the graph
+        for control in self.controls.values():
+            g.add_node(
+                self.control_order.inverse[control.code],
+                pos=(control.map_x, control.map_y),
+            )
+
+        # Draw the graph
+        pos = nx.get_node_attributes(g, "pos")
+        nx.draw(g, pos, node_color="white", edgecolors="red", node_size=500)
+        nx.draw_networkx_labels(g, pos)
+        nx.draw_networkx_edges(g, pos, edgelist=g.edges(), edge_color="blue")
+
+        # Add edges based on the solution
+        if len(solution) > 1:
+            for i in range(len(solution)):
+                next_node = solution[i + 1] if i + 1 < len(solution) else solution[0]
+                g.add_edge(str(solution[i]), str(next_node))
+            nx.draw_networkx_edges(g, pos, edgelist=g.edges(), edge_color="blue")
+
+        # plt.show()
