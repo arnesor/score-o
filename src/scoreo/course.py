@@ -3,7 +3,8 @@ import csv
 from pathlib import Path
 
 import defusedxml.ElementTree
-import matplotlib.pyplot as plt
+
+# import matplotlib.pyplot as plt
 import networkx as nx
 from bidict import bidict
 
@@ -216,4 +217,4 @@ class Course:
                 g.add_edge(str(solution[i]), str(next_node))
             nx.draw_networkx_edges(g, pos, edgelist=g.edges(), edge_color="blue")
 
-        plt.show()
+        # plt.show()

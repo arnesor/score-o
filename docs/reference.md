@@ -16,10 +16,26 @@ scoreo package
 =============================================================================
 
 
-scoreo.functions module
------------------------------------------------------------------------------
+scoreo.course module
+--------------------
 
-.. automodule:: scoreo.functions
+.. automodule:: scoreo.course
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+scoreo.opsolver module
+----------------------
+
+.. automodule:: scoreo.opsolver
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+scoreo.solution module
+----------------------
+
+.. automodule:: scoreo.solution
    :members:
    :undoc-members:
    :show-inheritance:

@@ -13,7 +13,7 @@ def run_opsolver(problem: Path) -> None:
     mnt_dir = problem.parent
     output = docker.run(
         "arneso/opsolver:1",
-        ["op-solver", "opt", "--op-exact", "1", f"{str(problem.name)}"],
+        ["opt", "--op-exact", "1", f"{str(problem.name)}"],
         remove=True,
         volumes=[(str(mnt_dir), "/tmp")],  # nosec B108
     )

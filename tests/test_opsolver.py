@@ -1,12 +1,18 @@
 from pathlib import Path
 
+import pytest
+
 from scoreo.opsolver import run_opsolver
 
 
-def test_run_opsolver():
-    problem = Path(__file__).parent / "data" / "race_230907-5016.oplib"
-    run_opsolver(problem)
+@pytest.fixture()
+def problem_file(tmp_path: Path) -> Path:
+    """Copy the test problem file to a temporary directory."""
+    source = Path(__file__).parent / "data" / "race_230907-5016.oplib"
+    destination = tmp_path / source.name
+    destination.write_bytes(source.read_bytes())
+    return destination
 
 
-if __name__ == "__main__":
-    test_run_opsolver()
+def test_run_opsolver(problem_file: Path) -> None:
+    run_opsolver(problem_file)
