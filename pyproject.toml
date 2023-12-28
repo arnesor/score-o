@@ -56,6 +56,10 @@ myst-parser = {version = ">=0.16.1"}
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]
+filterwarnings = [
+    # note the use of single quote below to denote "raw" strings in TOML
+    'ignore:datetime.datetime.utcfromtimestamp:DeprecationWarning',
+]
 
 [tool.poetry.scripts]
 score-o = "scoreo.__main__:main"

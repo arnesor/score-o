@@ -126,28 +126,31 @@ class Course:
         y_values = [control.terrain_y for control in self.controls.values()]
         return 2 * (max(x_values) - min(x_values)) + 2 * (max(y_values) - min(y_values))
 
-    def write_opsolver_file(self, source_file: Path, cost_limit: int) -> None:
+    def write_opsolver_file(self, source_file: Path, distance_limit: int) -> Path:
         """Write a problem file in oplib format for opsolver.
 
         The file format is described on
         https://github.com/bcamath-ds/OPLib/tree/master/instances
 
         Args:
-            source_file: IOF xml file with control coordinates
-            cost_limit: The cost limit for the problem (distance in meters)
+            source_file: IOF xml file with control coordinates.
+            distance_limit: The distance limit for the problem, in meters.
+
+        Returns:
+            The filename and path of the generated opsolver file.
         """
         basename = source_file.stem.split(".")[0]
         dir = source_file.parent / basename
         if not dir.is_dir():
             dir.mkdir()
 
-        filename = dir / f"{basename}-{str(cost_limit)}.oplib"
+        filename = dir / f"{basename}-{str(distance_limit)}.oplib"
         with open(filename, "w") as file:
             file.write(f"NAME : {basename}\n")
-            file.write(f"COMMENT : {basename} with cost limit {cost_limit}\n")
+            file.write(f"COMMENT : {basename} with cost limit {distance_limit}\n")
             file.write("TYPE : OP\n")
             file.write(f"DIMENSION : {len(self.controls)}\n")
-            file.write(f"COST_LIMIT : {str(cost_limit)}\n")
+            file.write(f"COST_LIMIT : {str(distance_limit)}\n")
             file.write("EDGE_WEIGHT_TYPE : EUC_2D\n")
 
             file.write("NODE_COORD_SECTION\n")
@@ -166,6 +169,7 @@ class Course:
             file.write("1\n")
             file.write("-1\n")
             file.write("EOF\n")
+        return filename
 
     def write_score_template(self, filename: Path) -> None:
         """Write a template file for setting scores on each control."""

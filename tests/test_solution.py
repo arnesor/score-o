@@ -1,8 +1,9 @@
 from pathlib import Path
 
-from scoreo.solution import check_solution
+from scoreo.solution import get_solution
 
 
-def test_check_solution() -> None:
+def test_get_solution() -> None:
     filename = Path(__file__).parent / "data" / "stats.json"
-    check_solution(filename)
+    solution = get_solution(filename)
+    print(solution)

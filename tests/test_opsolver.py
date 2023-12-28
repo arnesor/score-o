@@ -15,4 +15,7 @@ def problem_file(tmp_path: Path) -> Path:
 
 
 def test_run_opsolver(problem_file: Path) -> None:
-    run_opsolver(problem_file)
+    solution = run_opsolver(problem_file)
+    assert solution.number_of_controls == 25
+    assert solution.score == 335
+    assert solution.distance == 4875

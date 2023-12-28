@@ -6,10 +6,6 @@ import click
 from scoreo.course import Course
 
 
-# import matplotlib.pyplot as plt
-# import networkx as nx
-
-
 @click.command()
 @click.version_option()
 @click.argument("course_file", type=click.Path(exists=True))
