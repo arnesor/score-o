@@ -2,6 +2,7 @@ from pathlib import Path
 
 import pytest
 
+from scoreo.opsolver import find_initial_solution
 from scoreo.opsolver import run_opsolver
 
 
@@ -19,3 +20,9 @@ def test_run_opsolver(problem_file: Path) -> None:
     assert solution.number_of_controls == 25
     assert solution.score == 335
     assert solution.distance == 4875
+
+
+def test_find_initial_solution(problem_file: Path) -> None:
+    solution = find_initial_solution(problem_file)
+    assert solution.number_of_controls == 26
+    assert solution.score == 340

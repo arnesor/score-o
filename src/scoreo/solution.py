@@ -11,8 +11,9 @@ class Solution:
     score: int
     number_of_controls: int
     distance: int
-    distance_limit: int
     controls: list[int]
+    distance_limit: int
+    problem_number_of_controls: int
 
 
 def get_solution(solution_file: Path) -> Solution:
@@ -25,6 +26,7 @@ def get_solution(solution_file: Path) -> Solution:
         last_sol["sol"]["val"],
         last_sol["sol"]["sol_ns"],
         last_sol["sol"]["cap"],
-        last_sol["prob"]["d0"],
         last_sol["sol"]["cycle"],
+        last_sol["prob"]["d0"],
+        last_sol["prob"]["n"],
     )
