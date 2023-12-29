@@ -13,6 +13,7 @@ def runner() -> CliRunner:
     return CliRunner()
 
 
+@pytest.mark.skip(reason="Need to mock docker before running this test")
 def test_main_succeeds(runner: CliRunner) -> None:
     """It exits with a status code of zero."""
     filename = Path(__file__).parent / "data" / "race_230907.Courses.xml"
