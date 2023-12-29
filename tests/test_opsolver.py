@@ -25,15 +25,20 @@ def test_run_opsolver(problem_file: Path, mocker: MockerFixture) -> None:
     mock_docker_run = mocker.patch("scoreo.opsolver.docker.run")
 
     solution = run_opsolver(problem_file)
-
-    # Assertions to ensure docker.run was called correctly
     mock_docker_run.assert_called_once_with(
         "arneso/opsolver:1",
         ["opt", "--op-exact", "1", f"{str(problem_file.name)}"],
         remove=True,
         volumes=[(str(problem_file.parent), "/tmp")],  # nosec B108
     )
+    assert solution.number_of_controls == 25
+    assert solution.score == 335
+    assert solution.distance == 4875
 
+
+@pytest.mark.docker
+def test_run_opsolver_docker(problem_file: Path) -> None:
+    solution = run_opsolver(problem_file)
     assert solution.number_of_controls == 25
     assert solution.score == 335
     assert solution.distance == 4875

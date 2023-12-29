@@ -61,6 +61,10 @@ filterwarnings = [
     # note the use of single quote below to denote "raw" strings in TOML
     'ignore:datetime.datetime.utcfromtimestamp:DeprecationWarning',
 ]
+markers = [
+    "docker: marks tests as requiring docker (deselect with '-m \"not docker\"')",
+ ]
+addopts = "-m 'not docker'"
 
 [tool.poetry.scripts]
 score-o = "scoreo.__main__:main"
