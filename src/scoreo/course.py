@@ -1,5 +1,6 @@
 """Classes and functions for courses and controls."""
 import csv
+import math
 from pathlib import Path
 
 import defusedxml.ElementTree
@@ -144,10 +145,10 @@ class Course:
         if not dir.is_dir():
             dir.mkdir()
 
-        filename = dir / f"{basename}-{str(distance_limit)}.oplib"
+        filename = dir / f"{basename}.oplib"
         with open(filename, "w") as file:
             file.write(f"NAME : {basename}\n")
-            file.write(f"COMMENT : {basename} with cost limit {distance_limit}\n")
+            file.write("COMMENT : Orienteering problem generated from IOF xml file\n")
             file.write("TYPE : OP\n")
             file.write(f"DIMENSION : {len(self.controls)}\n")
             file.write(f"COST_LIMIT : {str(distance_limit)}\n")
@@ -156,9 +157,9 @@ class Course:
             file.write("NODE_COORD_SECTION\n")
             for key, value in self.control_order.items():
                 file.write(
-                    f"{key} "  # type: ignore[union-attr]
-                    f"{self.controls.get(value).terrain_x} "
-                    f"{self.controls.get(value).terrain_y}\n"
+                    f"{key} "
+                    f"{self.controls.get(value).terrain_x} "  # type: ignore[union-attr]
+                    f"{self.controls.get(value).terrain_y}\n"  # type: ignore[union-attr]
                 )
 
             file.write("NODE_SCORE_SECTION\n")
@@ -222,3 +223,31 @@ class Course:
             nx.draw_networkx_edges(g, pos, edgelist=g.edges(), edge_color="blue")
 
         # plt.show()
+
+    def get_stop_distance(self) -> int:
+        """Get the distance to the control nearest the finish and back again.
+
+        Returns:
+            Distance running to the nearest control and back to finish.
+        """
+        pos = []
+        for _, value in self.control_order.items():
+            pos.append(
+                (self.controls.get(value).terrain_x, self.controls.get(value).terrain_y)  # type: ignore[union-attr]
+            )
+
+        if len(pos) < 2:
+            return 0  # No other coordinate to compare with
+
+        first_coordinate = pos[0]
+        min_distance = math.inf
+        for coord in pos[1:]:
+            distance = math.sqrt(
+                (coord[0] - first_coordinate[0]) ** 2
+                + (coord[1] - first_coordinate[1]) ** 2
+            )
+            if distance < min_distance:
+                min_distance = distance
+
+        margin = 10
+        return math.ceil(min_distance * 2 + margin)

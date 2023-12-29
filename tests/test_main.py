@@ -16,5 +16,8 @@ def runner() -> CliRunner:
 def test_main_succeeds(runner: CliRunner) -> None:
     """It exits with a status code of zero."""
     filename = Path(__file__).parent / "data" / "race_230907.Courses.xml"
-    result = runner.invoke(__main__.main, [str(filename)])
+    result = runner.invoke(
+        __main__.main,
+        [str(filename), "--stop", "4800"],
+    )
     assert result.exit_code == 0

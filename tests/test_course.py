@@ -42,4 +42,5 @@ def test_read_course_file() -> None:
     ]
     course.display_controls(solution)
     assert len(course.controls) == 26
-    print(course)
+    stop_distance = course.get_stop_distance()
+    assert stop_distance == 271

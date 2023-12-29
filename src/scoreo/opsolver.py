@@ -7,19 +7,21 @@ from scoreo.solution import Solution
 from scoreo.solution import get_solution
 
 
-def run_opsolver(problem_file: Path) -> Solution:
+def run_opsolver(problem_file: Path, heuristic: bool = False) -> Solution:
     """Run opsolver on the given problem file.
 
     Args:
         problem_file: The file describing the problem to solve.
+        heuristic: Whether to use heuristic algorithm or not. Defaults to False.
 
     Returns:
         The solution to the problem.
     """
     mnt_dir = problem_file.parent
+    exact = str(int(heuristic is False))
     docker.run(
         "arneso/opsolver:1",
-        ["opt", "--op-exact", "1", f"{str(problem_file.name)}"],
+        ["opt", "--op-exact", f"{exact}", f"{str(problem_file.name)}"],
         remove=True,
         volumes=[(str(mnt_dir), "/tmp")],  # nosec B108
     )
@@ -72,3 +74,36 @@ def find_initial_solution(problem_file: Path) -> Solution:
         update_distance_limit(problem_file, solution.distance - distance_offset)
         solution = run_opsolver(problem_file)
     return last_solution
+
+
+def find_all_solutions(
+    problem_file: Path, start_distance: int, stop_distance: int, heuristic: bool = False
+) -> list[Solution]:
+    """Find all solutions shorter than the distance limit.
+
+    Start at distance limit and generate solutions iteratively with shorter limits.
+
+    Args:
+        problem_file: The file describing the problem to solve.
+        start_distance: The distance limit for the problem, in meters.
+        stop_distance: Finish the search when this distance is reached.
+        heuristic: Whether to use heuristic algorithm or not. Defaults to False.
+
+    Returns:
+        A list of solutions.
+    """
+    distance_offset = 10
+
+    solutions = []
+    update_distance_limit(problem_file, start_distance)
+    solution = run_opsolver(problem_file)
+    i = 1
+    print(f"Iteration {i}: {solution}")
+    while solution.distance > stop_distance:
+        solutions.append(solution)
+        update_distance_limit(problem_file, solution.distance - distance_offset)
+        solution = run_opsolver(problem_file)
+        i += 1
+        print(f"Iteration {i}: {solution}")
+
+    return solutions
