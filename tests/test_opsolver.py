@@ -6,6 +6,7 @@ from pytest_mock import MockerFixture
 from scoreo.opsolver import find_all_solutions
 from scoreo.opsolver import find_initial_solution
 from scoreo.opsolver import run_opsolver
+from scoreo.solution import Solution
 
 
 @pytest.fixture()
@@ -19,6 +20,14 @@ def problem_file(tmp_path: Path) -> Path:
     destination2 = tmp_path / source2.name
     destination2.write_bytes(source2.read_bytes())
     return destination1
+
+
+@pytest.mark.docker
+def test_run_opsolver_docker(problem_file: Path) -> None:
+    solution = run_opsolver(problem_file)
+    assert solution.number_of_controls == 25
+    assert solution.score == 335
+    assert solution.distance == 4875
 
 
 def test_run_opsolver(problem_file: Path, mocker: MockerFixture) -> None:
@@ -37,18 +46,29 @@ def test_run_opsolver(problem_file: Path, mocker: MockerFixture) -> None:
 
 
 @pytest.mark.docker
-def test_run_opsolver_docker(problem_file: Path) -> None:
-    solution = run_opsolver(problem_file)
-    assert solution.number_of_controls == 25
-    assert solution.score == 335
-    assert solution.distance == 4875
-
-
-@pytest.mark.skip(reason="Need to mock docker before running this test")
-def test_find_initial_solution(problem_file: Path) -> None:
+def test_find_initial_solution_docker(problem_file: Path) -> None:
     solution = find_initial_solution(problem_file)
     assert solution.number_of_controls == 26
     assert solution.score == 340
+
+
+def test_find_initial_solution(problem_file: Path, mocker: MockerFixture) -> None:
+    mock_docker_run = mocker.patch("scoreo.opsolver.docker.run")
+
+    solution_list = [
+        Solution(335, 25, 4875, [1, 17], 5016, 26),
+        Solution(340, 26, 6772, [1, 17], 10032, 26),
+        Solution(340, 26, 5126, [1, 17], 6762, 26),
+        Solution(340, 26, 5112, [1, 17], 5116, 26),
+        Solution(335, 25, 4875, [1, 17], 5102, 26),
+    ]
+    mock_get_solution = mocker.patch("scoreo.opsolver.get_solution")
+    mock_get_solution.side_effect = solution_list
+
+    solution = find_initial_solution(problem_file)
+    assert solution.number_of_controls == 26
+    assert solution.score == 340
+    mock_docker_run.assert_called()
 
 
 @pytest.mark.skip(reason="Need to mock docker before running this test")
