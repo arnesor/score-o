@@ -2,3 +2,7 @@
 # match the prettier format.
 .cookiecutter.json
 .cruft.json
+
+# Ignore files produced by oplib
+**/stats.json
+**/stats-all.json
