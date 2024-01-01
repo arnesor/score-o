@@ -45,6 +45,12 @@ class Control:
         pass
 
 
+def _distance_between_controls(c1: Control, c2: Control) -> float:
+    return math.sqrt(
+        (c1.terrain_x - c2.terrain_x) ** 2 + (c1.terrain_y - c2.terrain_y) ** 2
+    )
+
+
 class Course:
     """A Class representing a collection of controls."""
 
@@ -141,11 +147,11 @@ class Course:
             The filename and path of the generated opsolver file.
         """
         basename = source_file.stem.split(".")[0]
-        dir = source_file.parent / basename
-        if not dir.is_dir():
-            dir.mkdir()
+        dir_ = source_file.parent / basename
+        if not dir_.is_dir():
+            dir_.mkdir()
 
-        filename = dir / f"{basename}.oplib"
+        filename = dir_ / f"{basename}.oplib"
         with open(filename, "w") as file:
             file.write(f"NAME : {basename}\n")
             file.write("COMMENT : Orienteering problem generated from IOF xml file\n")
@@ -251,3 +257,46 @@ class Course:
 
         margin = 10
         return math.ceil(min_distance * 2 + margin)
+
+    def solution_score(self, solution: list[int]) -> int:
+        """Calculate the total score of a given solution.
+
+        Args:
+            solution: A list of control numbers representing the solution.
+
+        Returns:
+            The total score of the solution.
+        """
+        total_score = 0
+        for control_number in solution:
+            control_code = self.control_order.get(str(control_number))
+            control = self.controls.get(control_code)
+            if control is not None:
+                total_score += control.score
+        return total_score
+
+    def solution_length(self, solution: list[int]) -> int:
+        """Calculate the length of a given solution.
+
+        The length includes the distance back to start/finish.
+
+        Args:
+            solution: A list of control numbers representing the solution.
+
+        Returns:
+            The length of the solution.
+        """
+        if len(solution) < 2:
+            return 0
+
+        total_distance: float = 0.0
+        for i in range(len(solution)):
+            current_control = self.controls[self.control_order[str(solution[i])]]
+            next_control = self.controls[
+                self.control_order[
+                    str(solution[(i + 1) % len(solution)])
+                ]  # Loop back to the first control
+            ]
+            total_distance += _distance_between_controls(current_control, next_control)
+
+        return math.ceil(total_distance)
