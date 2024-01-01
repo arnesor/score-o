@@ -269,10 +269,9 @@ class Course:
         """
         total_score = 0
         for control_number in solution:
-            control_code = self.control_order.get(str(control_number))
-            control = self.controls.get(control_code)
-            if control is not None:
-                total_score += control.score
+            control_code = self.control_order[str(control_number)]
+            control = self.controls[control_code]
+            total_score += control.score
         return total_score
 
     def solution_length(self, solution: list[int]) -> int:

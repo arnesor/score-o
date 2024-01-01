@@ -5,3 +5,4 @@
 
 # Ignore files produced by oplib
 **/stats.json
+**/stats-all.json

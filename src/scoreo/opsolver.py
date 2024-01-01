@@ -4,7 +4,7 @@ from pathlib import Path
 from python_on_whales import docker
 
 from scoreo.solution import Solution
-from scoreo.solution import get_solution
+from scoreo.solution import get_last_solution
 
 
 def run_opsolver(problem_file: Path, heuristic: bool = False) -> Solution:
@@ -23,9 +23,9 @@ def run_opsolver(problem_file: Path, heuristic: bool = False) -> Solution:
         "arneso/opsolver:1",
         ["opt", "--op-exact", f"{exact}", f"{str(problem_file.name)}"],
         remove=True,
-        volumes=[(str(mnt_dir), "/tmp")],  # nosec B108
+        volumes=[(str(mnt_dir.resolve()), "/tmp")],  # nosec B108
     )
-    return get_solution(mnt_dir / "stats.json")
+    return get_last_solution(mnt_dir / "stats.json")
 
 
 def update_distance_limit(problem_file: Path, distance_limit: int) -> None:
@@ -69,6 +69,7 @@ def find_initial_solution(problem_file: Path) -> Solution:
         solution = run_opsolver(problem_file)
 
     # Find the shortest solution containing all controls
+    last_solution = solution
     while solution.number_of_controls == solution.problem_number_of_controls:
         last_solution = solution
         update_distance_limit(problem_file, solution.distance - distance_offset)
@@ -105,5 +106,7 @@ def find_all_solutions(
         solution = run_opsolver(problem_file)
         i += 1
         print(f"Iteration {i}: {solution}")
+
+    solutions.append(solution)
 
     return solutions

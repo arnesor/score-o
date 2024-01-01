@@ -56,7 +56,8 @@ def test_read_course_file(default_course: Course) -> None:
 
 def test_solution_score(default_course: Course) -> None:
     assert default_course.solution_score([1, 25]) == 5
-    assert default_course.solution_score([1, 25, 17]) == 15
+    assert default_course.solution_score([1, 17]) == 10
+    assert default_course.solution_score([1, 16, 17]) == 20
 
 
 def test_solution_length(default_course: Course) -> None:

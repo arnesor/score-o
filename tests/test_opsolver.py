@@ -7,6 +7,7 @@ from scoreo.opsolver import find_all_solutions
 from scoreo.opsolver import find_initial_solution
 from scoreo.opsolver import run_opsolver
 from scoreo.solution import Solution
+from scoreo.solution import get_all_solutions
 
 
 @pytest.fixture()
@@ -20,6 +21,12 @@ def problem_file(tmp_path: Path) -> Path:
     destination2 = tmp_path / source2.name
     destination2.write_bytes(source2.read_bytes())
     return destination1
+
+
+@pytest.fixture()
+def all_solutions() -> list[Solution]:
+    filename = Path(__file__).parent / "data" / "stats-all.json"
+    return get_all_solutions(filename)
 
 
 @pytest.mark.docker
@@ -62,7 +69,7 @@ def test_find_initial_solution(problem_file: Path, mocker: MockerFixture) -> Non
         Solution(340, 26, 5112, [1, 17], 5116, 26),
         Solution(335, 25, 4875, [1, 17], 5102, 26),
     ]
-    mock_get_solution = mocker.patch("scoreo.opsolver.get_solution")
+    mock_get_solution = mocker.patch("scoreo.opsolver.get_last_solution")
     mock_get_solution.side_effect = solution_list
 
     solution = find_initial_solution(problem_file)
@@ -71,7 +78,22 @@ def test_find_initial_solution(problem_file: Path, mocker: MockerFixture) -> Non
     mock_docker_run.assert_called()
 
 
-@pytest.mark.skip(reason="Need to mock docker before running this test")
-def test_find_all_solutions(problem_file: Path) -> None:
+@pytest.mark.docker
+def test_find_all_solutions_docker(problem_file: Path) -> None:
     solutions = find_all_solutions(problem_file, 5200, 4800)
     assert solutions[0].number_of_controls == 26
+
+
+def test_find_all_solutions(
+    problem_file: Path, all_solutions: list[Solution], mocker: MockerFixture
+) -> None:
+    mock_docker_run = mocker.patch("scoreo.opsolver.docker.run")
+
+    mock_get_solution = mocker.patch("scoreo.opsolver.get_last_solution")
+    mock_get_solution.side_effect = all_solutions
+
+    solutions = find_all_solutions(problem_file, 5200, 4800)
+    mock_docker_run.assert_called()
+    mock_get_solution.assert_called()
+    assert solutions[-1].score == 330
+    assert solutions[-1].distance == 4800
