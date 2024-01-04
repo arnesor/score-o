@@ -1,55 +1,43 @@
 from pathlib import Path
 
-import pytest
-
+from scoreo.course import Control
 from scoreo.course import Course
 
 
-@pytest.fixture()
-def default_course() -> Course:
+def test_add_control() -> None:
+    course1 = Course()
+    course1.add_control(Control("141", "10", "20"))
+    assert len(course1.controls) == 1
+    assert next(iter(course1.controls.values())).code == "141"
+
+    course2 = Course()
+    course2.add_control(Control("M1", "10", "20"))
+    assert len(course2.controls) == 1
+    assert next(iter(course2.controls.values())).code == "1"
+
+    course3 = Course()
+    course3.add_control(Control("S1", "10", "20"))
+    assert len(course3.controls) == 0
+
+
+def test_read_ocad_course_file() -> None:
     control_file = Path(__file__).parent / "data" / "race_230907.Courses.xml"
-    score_file = Path(__file__).parent / "data" / "race_230907.sco"
     course = Course()
     course.read_ocad_course_file(control_file)
-    course.read_score_file(score_file)
-    return course
+    assert len(course.controls) == 26
+    assert len(course.control_order) == 26
+    assert next(iter(course.controls.values())).terrain_x != 0
+    assert next(iter(course.controls.values())).terrain_y != 0
+    assert next(iter(course.controls.values())).score == 0
 
 
-def test_read_course_file(default_course: Course) -> None:
+def test_write_opsolver_file(default_course: Course) -> None:
     control_file = Path(__file__).parent / "data" / "race_230907.Courses.xml"
-    # course.write_score_template()
-    default_course.write_opsolver_file(control_file, 5100)
+    opsolver_file = default_course.write_opsolver_file(control_file, 5100)
+    assert opsolver_file.is_file()
 
-    solution = [
-        1,
-        25,
-        23,
-        24,
-        14,
-        5,
-        2,
-        3,
-        4,
-        11,
-        10,
-        15,
-        9,
-        8,
-        6,
-        12,
-        13,
-        7,
-        26,
-        22,
-        21,
-        20,
-        19,
-        18,
-        16,
-        17,
-    ]
-    default_course.display_controls(solution)
-    assert len(default_course.controls) == 26
+
+def test_stop_distance(default_course: Course) -> None:
     stop_distance = default_course.get_stop_distance()
     assert stop_distance == 271
 

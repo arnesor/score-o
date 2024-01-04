@@ -11,7 +11,7 @@ from bidict import bidict
 
 
 class Control:
-    """A Class representing an orienteering control with position, code and points."""
+    """A Class representing an orienteering control with position, code and score."""
 
     multiplier = 10
 
@@ -19,30 +19,12 @@ class Control:
         self.code = code
         self.map_x = int(float(x) * Control.multiplier)
         self.map_y = int(float(y) * Control.multiplier)
-        self.points = 0
         self.terrain_x = 0
         self.terrain_y = 0
         self.score = 0
 
     def __repr__(self) -> str:
         return f"{self.code} {self.terrain_x} {self.terrain_y} {self.score}"
-        #
-        # return (
-        #     f"Control({self.code}, {self.map_x}, {self.map_y}, {self.terrain_x}, "
-        #     f"{self.terrain_y}, {self.points})"
-        # )
-
-    def set_terrain_position(
-        self, scale: int, terrain_offset_x: int, terrain_offset_y: int
-    ) -> None:
-        """Set the geographic position of the map area, using offsets in meters.
-
-        Args:
-            scale: The denominator in the map scale. Example 1:10000 -> 10000.
-            terrain_offset_x: Offset in north direction, measured in meters.
-            terrain_offset_y: Offset in east direction, measured in meters.
-        """
-        pass
 
 
 def _distance_between_controls(c1: Control, c2: Control) -> float:
