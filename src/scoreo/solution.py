@@ -1,4 +1,5 @@
 """Functions for working with the solutions from opsolver."""
+
 import json
 from dataclasses import dataclass
 from pathlib import Path
