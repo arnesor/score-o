@@ -1,4 +1,5 @@
 """Classes and functions for courses and controls."""
+
 import csv
 import math
 from pathlib import Path
