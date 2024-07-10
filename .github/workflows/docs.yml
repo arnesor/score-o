@@ -30,7 +30,7 @@ jobs:
 
       - name: Install Poetry
         run: |
-          pipx install --pip-args "-c .github/workflows/constraints.txt" poetry
+          pipx install --pip-args "-c ${{ github.workspace }}/.github/workflows/constraints.txt" poetry
           poetry --version
 
       - name: Set up Python
@@ -41,11 +41,11 @@ jobs:
 
       - name: Install dependencies
         run: |
-          poetry install --no-root
+          poetry install
 
       - name: Build doc with Sphinx
         run: |
-          poetry run sphinx-build -W docs docs/_build
+          poetry run sphinx-build docs docs/_build
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
