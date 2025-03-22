@@ -131,6 +131,9 @@ dmypy.json
 # PyCharm
 .idea/
 
+# Ruff stuff:
+.ruff_cache/
+
 /.python-version
 /.pytype/
 /docs/_build/
