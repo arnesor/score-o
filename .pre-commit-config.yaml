@@ -45,6 +45,7 @@ repos:
         entry: check-json
         language: system
         types: [json]
+        exclude: ^tests/data/(stats-all\.json|stats\.json)$
       - id: check-toml
         name: Check Toml
         entry: check-toml

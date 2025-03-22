@@ -23,7 +23,7 @@ def test_run_opsolver(problem_file: Path, mocker: MockerFixture) -> None:
     solution = run_opsolver(problem_file)
     mock_docker_run.assert_called_once_with(
         "arneso/opsolver:1",
-        ["opt", "--op-exact", "1", f"{str(problem_file.name)}"],
+        ["opt", "--op-exact", "1", f"{problem_file.name!s}"],
         remove=True,
         volumes=[(str(problem_file.parent), "/tmp")],  # nosec B108
     )

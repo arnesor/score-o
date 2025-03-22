@@ -140,7 +140,7 @@ class Course:
             file.write("COMMENT : Orienteering problem generated from IOF xml file\n")
             file.write("TYPE : OP\n")
             file.write(f"DIMENSION : {len(self.controls)}\n")
-            file.write(f"COST_LIMIT : {str(distance_limit)}\n")
+            file.write(f"COST_LIMIT : {distance_limit!s}\n")
             file.write("EDGE_WEIGHT_TYPE : EUC_2D\n")
 
             file.write("NODE_COORD_SECTION\n")

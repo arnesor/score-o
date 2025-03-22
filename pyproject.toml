@@ -120,6 +120,8 @@ ignore = [
     "ANN202", # Don't requiere return type annotation for private functions.
     "ANN401", # Allow type annotation with type Any.
     "D100",   # Supress undocumented-public-module. Only doc of public api required.
+    "D105",   # Supress missing docstring in magic method.
+    "D107",   # Supress missing docstring in `__init__`.
     "FBT001", # Allow boolean positional arguments in a function.
     "FBT002", # Allow boolean default positional arguments in a function.
     "E402",   # Supress module-import-not-at-top-of-file, needed in jupyter notebooks.
