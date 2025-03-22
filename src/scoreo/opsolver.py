@@ -22,7 +22,7 @@ def run_opsolver(problem_file: Path, heuristic: bool = False) -> Solution:
     exact = str(int(heuristic is False))
     docker.run(
         "arneso/opsolver:1",
-        ["opt", "--op-exact", f"{exact}", f"{str(problem_file.name)}"],
+        ["opt", "--op-exact", f"{exact}", f"{problem_file.name!s}"],
         remove=True,
         volumes=[(str(mnt_dir.resolve()), "/tmp")],  # nosec B108
     )

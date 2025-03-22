@@ -6,17 +6,19 @@
 [![License](https://img.shields.io/pypi/l/score-o)][license]
 
 [![Documentation](https://github.com/arnesor/score-o/actions/workflows/docs.yml/badge.svg)][documentation]
-[![Tests](https://github.com/arnesor/score-o/workflows/Tests/badge.svg)][tests]
+[![Tests](https://github.com/arnesor/score-o/actions/workflows/tests.yml/badge.svg)][tests]
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=arnesor_score-o&metric=coverage)][sonarcov]
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=arnesor_score-o&metric=alert_status)][sonarquality]
 
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)][pre-commit]
 [![Black](https://img.shields.io/badge/code%20style-black-000000.svg)][black]
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![Poetry](https://img.shields.io/endpoint?url=https://python-poetry.org/badge/v0.json)][poetry]
 
 [pypi status]: https://pypi.org/project/score-o/
 [documentation]: https://arnesor.github.io/score-o
 [tests]: https://github.com/arnesor/score-o/actions?workflow=Tests
+
 [sonarcov]: https://sonarcloud.io/summary/overall?id=arnesor_score-o
 [sonarquality]: https://sonarcloud.io/summary/overall?id=arnesor_score-o
 [pre-commit]: https://github.com/pre-commit/pre-commit
@@ -38,7 +40,7 @@ Analysis tools for score orienteering competitions.
 You can install _Score Orienteering_ via [pip] from [PyPI]:
 
 ```console
-$ pip install score-o
+pip install score-o
 ```
 
 ## Usage

@@ -8,12 +8,8 @@ readme = "README.md"
 homepage = "https://github.com/arnesor/score-o"
 repository = "https://github.com/arnesor/score-o"
 documentation = "https://arnesor.github.io/score-o"
-packages = [
-    { include = "scoreo", from = "src" },
-]
-classifiers = [
-    "Development Status :: 3 - Alpha",
-]
+packages = [{ include = "scoreo", from = "src" }]
+classifiers = ["Development Status :: 3 - Alpha"]
 
 [tool.poetry.urls]
 Changelog = "https://github.com/arnesor/score-o/releases"
@@ -29,23 +25,15 @@ python-on-whales = ">=0.68.0"
 
 [tool.poetry.group.dev.dependencies]
 Pygments = ">=2.10.0"
-bandit = ">=1.7.4"
 black = {extras = ["jupyter"], version = ">=23.1.0"}
 coverage = {extras = ["toml"], version = ">=6.2"}
 darglint = ">=1.8.1"
-flake8 = ">=4.0.1"
-flake8-bugbear = ">=21.9.2"
-flake8-docstrings = ">=1.6.0"
-flake8-rst-docstrings = ">=0.2.5"
 furo = ">=2021.11.12"
-isort = ">=5.10.1"
 mypy = ">=0.930"
-pep8-naming = ">=0.12.1"
 pre-commit = ">=2.16.0"
 pre-commit-hooks = ">=4.1.0"
+ruff = ">=0.0.284"
 pytest = ">=6.2.5"
-pyupgrade = ">=2.29.1"
-safety = ">=1.10.3"
 sphinx = ">=6.2.1"
 sphinx-autobuild = ">=2021.3.14"
 sphinx-autodoc-typehints = ">=1.24.0"
@@ -83,11 +71,6 @@ relative_files = true
 show_missing = true
 fail_under = 50
 
-[tool.isort]
-profile = "black"
-force_single_line = true
-lines_after_imports = 2
-
 [tool.mypy]
 strict = true
 warn_unreachable = true
@@ -104,6 +87,79 @@ module = [
     "networkx.*"
 ]
 ignore_missing_imports = true
+
+[tool.ruff]
+force-exclude = true  # Apply excludes to pre-commit
+show-fixes = true
+src = ["src", "tests"]
+target-version = "py311"  # Minimum Python version supported
+include = ["*.py", "*.pyi", "**/pyproject.toml", "*.ipynb"]
+extend-exclude = [
+    "__pycache__",
+    "old",
+    ".ipynb_checkpoints",
+    "noxfile.py",
+    "docs/conf.py",
+]
+
+# Ruff rules may be customized as desired: https://docs.astral.sh/ruff/rules/
+[tool.ruff.lint]
+select = [
+    "A",    # prevent using keywords that clobber python builtins
+    "ANN",  # check type annotations
+    "B",    # bugbear: security warnings
+    "D",    # documentation
+    "E",    # pycodestyle
+    "F",    # pyflakes
+    "ISC",  # implicit string concatenation
+    "I",    # sort imports
+    "UP",   # alert you when better syntax is available in your python version
+    "RUF",  # the ruff developer's own rules
+]
+ignore = [
+    "ANN202", # Don't requiere return type annotation for private functions.
+    "ANN401", # Allow type annotation with type Any.
+    "D100",   # Supress undocumented-public-module. Only doc of public api required.
+    "D105",   # Supress missing docstring in magic method.
+    "D107",   # Supress missing docstring in `__init__`.
+    "FBT001", # Allow boolean positional arguments in a function.
+    "FBT002", # Allow boolean default positional arguments in a function.
+    "E402",   # Supress module-import-not-at-top-of-file, needed in jupyter notebooks.
+    "E501",   # Supress line-too-long warnings: trust black's judgement on this one.
+    "PLR2004", # Allow to compare with unnamed numerical constants.
+]
+
+[tool.ruff.lint.isort]
+force-single-line = true
+
+[tool.ruff.lint.mccabe]
+max-complexity = 15
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"  # You can also use "numpy".
+
+[tool.ruff.lint.pylint]
+max-args = 8
+
+[tool.ruff.lint.pep8-naming]
+classmethod-decorators = ["classmethod", "validator", "root_validator", "pydantic.validator"]
+
+[tool.ruff.lint.per-file-ignores]
+"*/__init__.py" = ["F401"]
+"**/tests/*" = [
+    "ANN001",  # type annotations don't add value for test functions
+    "ANN002",  # type annotations don't add value for test functions
+    "ANN003",  # type annotations don't add value for test functions
+    "ANN201",  # type annotations don't add value for test functions
+    "ANN204",  # type annotations don't add value for test functions
+    "ANN205",  # type annotations don't add value for test functions
+    "ANN206",  # type annotations don't add value for test functions
+    "D100",    # docstrings are overkill for test functions
+    "D101",
+    "D102",
+    "D103",
+    "S101",    # asserts are encouraged in pytest
+]
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

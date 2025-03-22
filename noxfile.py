@@ -23,7 +23,8 @@ except ImportError:
     raise SystemExit(dedent(message)) from None
 
 package = "scoreo"
-python_versions = ["3.11", "3.10"]
+python_versions = ["3.11", "3.12", "3.13"]
+python_versions_for_test = python_versions + ["3.10"]
 nox.needs_version = ">= 2021.6.6"
 nox.options.sessions = (
     "pre-commit",
@@ -128,18 +129,11 @@ def precommit(session: Session) -> None:
         "--show-diff-on-failure",
     ]
     session.install(
-        "bandit",
-        "black",
-        "darglint",
-        "flake8",
-        "flake8-bugbear",
-        "flake8-docstrings",
-        "flake8-rst-docstrings",
-        "isort",
-        "pep8-naming",
         "pre-commit",
         "pre-commit-hooks",
-        "pyupgrade",
+        "darglint",
+        "ruff",
+        "black",
     )
     session.run("pre-commit", *args)
     if args and args[0] == "install":
@@ -157,7 +151,7 @@ def mypy(session: Session) -> None:
         session.run("mypy", f"--python-executable={sys.executable}", "noxfile.py")
 
 
-@session(python=python_versions)
+@session(python=python_versions_for_test)
 def tests(session: Session) -> None:
     """Run the test suite."""
     session.install(".")
