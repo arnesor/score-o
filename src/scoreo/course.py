@@ -128,6 +128,9 @@ class Course:
 
         Returns:
             The filename and path of the generated opsolver file.
+
+        Raises:
+            ValueError: If missing control for code.
         """
         basename = source_file.stem.split(".")[0]
         dir_ = source_file.parent / basename
@@ -145,11 +148,10 @@ class Course:
 
             file.write("NODE_COORD_SECTION\n")
             for key, value in self.control_order.items():
-                file.write(
-                    f"{key} "
-                    f"{self.controls.get(value).terrain_x} "  # type: ignore[union-attr]
-                    f"{self.controls.get(value).terrain_y}\n"  # type: ignore[union-attr]
-                )
+                control = self.controls.get(value)
+                if control is None:
+                    raise ValueError(f"Missing control for {value}")
+                file.write(f"{key} {control.terrain_x} {control.terrain_y}\n")
 
             file.write("NODE_SCORE_SECTION\n")
             for key, value in self.control_order.items():
