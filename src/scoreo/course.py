@@ -148,7 +148,7 @@ class Course:
                 file.write(
                     f"{key} "
                     f"{self.controls.get(value).terrain_x} "  # type: ignore[union-attr]
-                    f"{self.controls.get(value).terrain_y}\n"
+                    f"{self.controls.get(value).terrain_y}\n"  # type: ignore[union-attr]
                 )
 
             file.write("NODE_SCORE_SECTION\n")
